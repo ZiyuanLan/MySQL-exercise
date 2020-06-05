@@ -49,38 +49,52 @@ SELECT amount/quant AS price FROM sales;
 SELECT m.member_id, s.amount
 FROM sales s
 INNER JOIN members m
-ON s.member_id=m.member
+ON s.member_id=m.member;
 
 (RIGHT场景：找到会员与非会员的交易金额)
-#使用会员表中的member_id匹配销售表中的member_id，查询购买产品的会员ID以及购买金额。如果为非会员，则member_id为空值null#
+#使用会员表中的member_id匹配销售表中的member_id，查询购买产品的会员ID以及购买金额。（如果为非会员，则member_id为空值null）#
 SELECT m.member_id, s.amount
 FROM members m
 RIGHT JOIN sales s
-ON m.member_id=s.member_id
+ON m.member_id=s.member_id;
 
 (LEFT场景：找到未购买产品的会员)
-#找到未购买产品的会员，他的年龄，性别（购买数量为0）#
+#找到未购买产品的会员，他的年龄，性别#
 SELECT m.age, m.gender
 FROM members m
 LEFT JOIN sales s
 on m.member_id = s.member_id
-WHERE amount is NULL
+WHERE amount is NULL;
 
 ---------------------------------------------------------
 
 #第四章 数据分组和排序#
 
+#从销售表中找到业绩最好的门店#
+SELECT shop_name, SUM(amount) AS total
+FROM sales
+Group BY shop_name
+ORDER BY total;
 
+#将会员的性别改为中文#
+SELECT
+CASE gender
+WHEN 'm'THEN'男'
+WHEN 'w'THEN'女'
+END AS flag
+FROM members;
 
+#找出销售金额最高的产品大类与产品小类#
+SELECT 
+base_category, category, SUM(amount) AS total
+FROM sales s
+INNER JOIN product p
+ON s.product_id=p.product_id
+GROUP BY base_category, category
+ORDER BY total DESC;
 
-
-
-
-
-
-
-
-
+#找出购买产品和未购买产品的会员年龄和性别分布#
+SELECT 
 
 
 
