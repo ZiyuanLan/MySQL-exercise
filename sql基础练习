@@ -1,8 +1,11 @@
 #找出销售产品的配送城市（只显示前10行）#
 SELECT city FROM sales LIMIT 10;
 
+#统计配送城市数量，去除重复记录#
+SELECT COUNT(DISTINCT(delivery_city)) from sales;
 
-
+#找出每笔销售记录销售数量的最小值和最大值，并求销售数量的总和#
+SELECT MAX(amount),MIN(amount),SUM(amount) from sales;
 
 
 
