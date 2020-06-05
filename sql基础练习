@@ -17,27 +17,93 @@ SELECT AVG(amount), SUM(amount), COUNT(DISTINCT city) FROM sales;
 
 #第二章 筛选会员/产品信息#
 
-#从销售表中筛选出交易量大于10的产品ID和交易量#
-SELECT product_id,quant FROM sales 
-WHERE quant > 10;
-
-#从销售表中筛选出交易金额在100~500元之间的产品ID和交易金额#
+#从销售表中筛选出交易金额在100~500元之间的产品ID和交易金额# （精确匹配）
 SELECT product_id, amount FROM sales 
 where amount between 100 and 500;
 
-#销售表中筛选出武汉和上海的会员ID#
-select member_id from sales where city in ("wuhan","shanghai");
+从销售表中，找出销售数量在5件以上同时配送城市为武汉的会员ID
+SELECT member_id from sales 
+WHERE quant >5 AND delivery_city = "wuhan";
+
+#销售表中筛选出武汉和上海的会员ID# (范围匹配)
+select member_id from sales 
+where city in ("wuhan","shanghai");
 
 #从会员表中筛选出手机号码最后含09以及姓张的会员ID、手机号码和姓名#
 SELECT member_id, phone, name FROM members 
 WHERE phone LIKE '%09' AND name LIKE '张%'
 
-#从销售表中筛选出交易城市为上海的会员ID与交易城市#
-SELECT member_id, city FROM sales 
-where city = "shanghai";
+#请从销售表中，找出南京白下区交易金额大于1000的门店名称以及交易金额# （模糊匹配）
+SELECT shop_name, amount from sales 
+WHERE shop_name LIKE "南京白下区%" AND amount > 1000;
 
 #将销售表中的交易金额/交易量定义为单价#
 SELECT amount/quant AS price FROM sales;
+
+------------------------------------------------------------
+
+#第三章 表连接#
+
+(INNER场景：找到会员的消费金额)
+#使用会员ID链接销售表与会员表，找出购买产品的会员ID以及消费金额#
+SELECT m.member_id, s.amount
+FROM sales s
+INNER JOIN members m
+ON s.member_id=m.member
+
+(RIGHT场景：找到会员与非会员的交易金额)
+#使用会员表中的member_id匹配销售表中的member_id，查询购买产品的会员ID以及购买金额。如果为非会员，则member_id为空值null#
+SELECT m.member_id, s.amount
+FROM members m
+RIGHT JOIN sales s
+ON m.member_id=s.member_id
+
+(LEFT场景：找到未购买产品的会员)
+#找到未购买产品的会员，他的年龄，性别（购买数量为0）#
+SELECT m.age, m.gender
+FROM members m
+LEFT JOIN sales s
+on m.member_id = s.member_id
+WHERE amount is NULL
+
+---------------------------------------------------------
+
+#第四章 数据分组和排序#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
