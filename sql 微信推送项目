@@ -22,17 +22,27 @@ SELECT DISTINCT a.*,b.drop_dt
 FROM push_detail a
 INNER JOIN push b ON a.camp_id=b.camp_id
 WHERE a.read_date>=b.drop_dt
-AND a.read_date<=date(b.drop_dt)+1;
+AND a.read_date<=DATE(b.drop_dt)+1;
 
+#步骤二：把满足条件的用户（在活动推送一天内阅读）和发生过购买行为的用户进行匹配链接#
 
+CREATE TABLE push_sales AS
+SELECT DISTINCT a.camp_id,
+SUM(b.amount) AS total_amount
+FROM push_reader a
+INNER JOIN sales b 
+ON a.member_id=b.member_id
+WHERE b.transaction_date>=a.read_date
+AND b.transaction_date<=DATE(a.read_date)+1
+GROUP BY camp_id;
 
+#步骤三：计算ROI，并找到ROI最高的推送活动#
 
-
-
-
-
-
-
+SELECT a.camp_id, b.total_amount, a.cost, b.total_amount/a.cost AS ROI
+FROM push a
+INNER JOIN push_sales b 
+ON a.camp_id=b.camp_id
+ORDER BY ROI DESC;
 
 
 
