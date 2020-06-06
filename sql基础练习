@@ -8,7 +8,7 @@ SELECT delivery_city FROM sales LIMIT 10;
 SELECT COUNT(DISTINCT delivery_city) FROM sales;
 
 #找出每笔销售记录销售数量的最小值和最大值，并求销售数量的总和#
-SELECT MAX(quant),MIN(quant),SUM(quant) FROM sales;
+SELECT MAX(quant), MIN(quant), SUM(quant) FROM sales;
 
 #销售表中找出交易金额的平均值、总和、以及交易城市的个数（去重）#
 SELECT AVG(amount), SUM(amount), COUNT(DISTINCT city) FROM sales;
@@ -34,7 +34,7 @@ SELECT member_id, phone, name FROM members
 WHERE phone LIKE '%09' AND name LIKE '张%'
 
 #请从销售表中，找出南京白下区交易金额大于1000的门店名称以及交易金额# （模糊匹配）
-SELECT shop_name, amount from sales 
+SELECT shop_name, amount FROM sales 
 WHERE shop_name LIKE "南京白下区%" AND amount > 1000;
 
 #将销售表中的交易金额/交易量定义为单价#
@@ -49,7 +49,7 @@ SELECT amount/quant AS price FROM sales;
 SELECT m.member_id, s.amount
 FROM sales s
 INNER JOIN members m
-ON s.member_id=m.member;
+ON s.member_id=m.member_id;
 
 (RIGHT场景：找到会员与非会员的交易金额)
 #使用会员表中的member_id匹配销售表中的member_id，查询购买产品的会员ID以及购买金额。（如果为非会员，则member_id为空值null）#
@@ -59,8 +59,8 @@ RIGHT JOIN sales s
 ON m.member_id=s.member_id;
 
 (LEFT场景：找到未购买产品的会员)
-#找到未购买产品的会员，他的年龄，性别#
-SELECT m.age, m.gender
+#找到未购买产品的会员，他的名字，年龄，性别#
+SELECT name, age, gender
 FROM members m
 LEFT JOIN sales s
 on m.member_id = s.member_id
@@ -84,21 +84,46 @@ WHEN 'w'THEN'女'
 END AS flag
 FROM members;
 
-#找出销售金额最高的产品大类与产品小类#
-SELECT 
-base_category, category, SUM(amount) AS total
+#找出销售金额最高的产品大类与产品小类# (HAVING / WHERE 用法)
+SELECT base_category, category, SUM(amount) AS total
 FROM sales s
 INNER JOIN product p
 ON s.product_id=p.product_id
 GROUP BY base_category, category
+HAVING total > 250000
+ORDER BY total DESC;
+
+SELECT base_category, category, SUM(amount) AS total
+FROM sales s
+INNER JOIN product p
+ON s.product_id=p.product_id
+WHERE amount >= 5000
+GROUP BY base_category, category
+HAVING total > 250000
 ORDER BY total DESC;
 
 #找出购买产品和未购买产品的会员年龄和性别分布#
-SELECT 
+SELECT m.member_id, age, gender,
+CASE
+WHEN s.member_id IS NOT NULL THEN 'Y' ELSE 'N'
+END AS flag
+FROM sales s
+RIGHT JOIN members m
+ON m.member_id=s.member_id;
 
+#找到不同年龄段的顾客平均消费金额的差异#
+SELECT AVG(amount),
+CASE
+WHEN age<=35 THEN '青年'
+WHEN age>=36 AND age<=50 THEN '中年'
+WHEN age>51 THEN '老年'
+END AS flag
+FROM sales s
+INNER JOIN members m
+ON s.member_id=m.member_id
+GROUP BY flag;
 
-
-
+-----------------------------------------------------
 
 
 
