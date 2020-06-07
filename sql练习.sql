@@ -1,51 +1,28 @@
 
 --------------------------------------------------------------
-
 #第一章 查询销售数据#
 
-
-
 #找出销售产品的配送城市（只显示前10行）#
-
 SELECT delivery_city FROM sales LIMIT 10;
 
-
-
 #统计配送城市数量，去除重复记录#
-
 SELECT COUNT(DISTINCT delivery_city) FROM sales;
 
-
-
 #找出每笔销售记录销售数量的最小值和最大值，并求销售数量的总和#
-
 SELECT MAX(quant), MIN(quant), SUM(quant) FROM sales;
 
-
-
 #销售表中找出交易金额的平均值、总和、以及交易城市的个数（去重）#
-
 SELECT AVG(amount), SUM(amount), COUNT(DISTINCT city) FROM sales;
-
-
 
 -------------------------------------------------------------
 
-
-
 #第二章 筛选会员/产品信息#
 
-
-
 #从销售表中筛选出交易金额在100~500元之间的产品ID和交易金额# （精确匹配）
-
 SELECT product_id, amount FROM sales 
-
 where amount between 100 and 500;
 
-
-
-从销售表中，找出销售数量在5件以上同时配送城市为武汉的会员ID
+#从销售表中，找出销售数量在5件以上同时配送城市为武汉的会员ID#
 
 SELECT member_id from sales 
 
